@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserPo">
+
+	<resultMap id="UserPoMap" type="UserPo">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="password" column="password" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<insert id="insert" parameterType="UserPo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user
+		VALUES(#{id}, #{name}, #{password}, #{createTime})
+	</insert>
+
+	<update id="updateById" parameterType="UserPo">
+		UPDATE user 
+		SET 
+			id = #{id},
+			name = #{name},
+			password = #{password},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="Integer">
+		DELETE FROM user WHERE id = #{id}
+	</delete>
+
+	<select id="selectById" parameterType="Integer" resultMap="UserPoMap">
+		SELECT * FROM user WHERE id = #{id}
+	</select>
+
+	<select id="selectAll" parameterType="Map" resultMap="UserPoMap" >
+		SELECT * 
+		FROM user 
+		<where>
+			<if test="_parameter.containsKey('id')">
+				AND id = #{id}
+			</if>
+			<if test="_parameter.containsKey('name')">
+				AND name = #{name}
+			</if>
+			<if test="_parameter.containsKey('password')">
+				AND password = #{password}
+			</if>
+			<if test="_parameter.containsKey('createTime')">
+				AND create_time = #{createTime}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectForPage" parameterType="Map" resultMap="UserPoMap">
+		SELECT * 
+		FROM user 
+		<where>
+			<if test="id != null and  id != ''">
+				AND id = #{id}
+			</if>
+			<if test="name != null and  name != ''">
+				AND name = #{name}
+			</if>
+			<if test="password != null and  password != ''">
+				AND password = #{password}
+			</if>
+			<if test="createTime != null and  createTime != ''">
+				AND create_time = #{createTime}
+			</if>
+		</where>
+		ORDER BY id DESC
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+	<select id="selectForPageTotalCount" parameterType="Map" resultType="Integer">
+		SELECT COUNT(1) 
+		FROM user 
+		<where>
+			<if test="id != null and  id != ''">
+				AND id = #{id}
+			</if>
+			<if test="name != null and  name != ''">
+				AND name = #{name}
+			</if>
+			<if test="password != null and  password != ''">
+				AND password = #{password}
+			</if>
+			<if test="createTime != null and  createTime != ''">
+				AND create_time = #{createTime}
+			</if>
+		</where>
+	</select>
+</mapper>
